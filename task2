@@ -1,0 +1,148 @@
+/* Create a student management system that can handle student registrations, maintain student records, and calculate grades.
+The system should allow adding, editing, and deleting student information. */
+
+#include<stdio.h>
+  #include<string.h>
+   #include<stdlib.h>
+   #define MAX_STUDENTS 100
+   #define NAME_LENGTH 50
+  
+   typedef struct
+   {
+          int id;
+          char name[NAME_LENGTH];
+          float marks[5];
+          float avg;
+          char grade;
+  }Student;
+ 
+  Student students[MAX_STUDENTS];
+  int studentCount=0;
+ 
+  char calculateGrade(float avg)
+  {
+          if(avg >= 90)
+                 return 'A';
+          else if(avg >= 80)
+                 return 'B';
+          else if(avg >= 70)
+                  return 'C';
+          else if(avg >= 60)
+                  return 'D';
+          else return 'F';
+  }
+void addStudent()
+  {
+          if(studentCount >= MAX_STUDENTS)
+          {
+                  printf("\e[31mStudent limit reached, you cannot add more students.\n\e[0m");
+                  return;
+          }
+          Student s;
+         s.id=studentCount + 1;
+          printf("Enter name: \n");
+          scanf(" %[^\n]",s.name);
+          printf("Enter marks of 5 subjects:\n");
+          s.avg = 0;
+          for(int i=0;i<5;i++)
+          {
+                 printf("Subject %d: ",i+1);
+                  scanf("%f",&s.marks[i]);
+                  s.avg += s.marks[i];
+          }
+          s.avg /= 5;
+          s.grade = calculateGrade(s.avg);
+          students[studentCount++] = s;
+          printf("\e[32mStudent added successfully!\n\e[0m");
+  }
+void viewStudents()
+  {
+          if(studentCount == 0)
+          {
+                  printf("\e[31mNo students to display.\n\e[0m");
+                  return;
+          }
+          printf("\n%-5s %-20s %-10s %-10s\n","ID","Name","Avg","Grade");
+          for(int i=0;i<studentCount;i++)
+          {
+                  printf("\n%-5d %-20s %-10.2f %-10c\n", students[i].id, students[i].name, students[i].avg, students[i].grade);
+          }
+  }
+void editStudent()
+  {
+          int id;
+          printf("Enter student ID to edit: ");
+          scanf("%d",&id);
+         if(id < 1 || id > studentCount)
+          {
+                  printf("\e[31mInvalid student id.\n\e[0m");
+                  return;
+          }
+          Student *s = &students[id -1];
+          printf("Editing student: %s\n",s->name);
+          printf("Enter new name: ");
+          scanf(" %[^\n]",s->name);
+          printf("Enter new marks of 5 subjects:\n");
+          s->avg = 0;
+          for(int i=0;i<5;i++)
+          {
+                  printf("Subject %d: ",i + 1);
+                  scanf("%f",&s->marks[i]);
+                  s->avg += s->marks[i];
+          }
+          s->avg /= 5;
+          s->grade = calculateGrade(s->avg);
+          printf("\e[32mStudent record updated successfully!\n\e[0m");
+  }
+void deleteStudent()
+ {
+         int id;
+         printf("Enter student ID to delete: ");
+         scanf("%d",&id);
+         if(id < 1 || id > studentCount)
+         {
+                printf("\e[31mInvalid student ID.\n\e[0m");
+                 return;
+         }
+         for(int i=id-1;i<studentCount-1;i++)
+         {
+                 students[i] = students[i+1];
+         }
+         studentCount--;
+        printf("\e[32mStudents record deleted successfully!\n\e[0m");
+ }
+void menu()
+ {
+        int choice;
+         do
+         {
+                 printf("\n\e[35mStudent Management System\n\e[0m");
+                 printf("\e[35m=======================================\n\e[0m");
+                 printf("\e[34m1. Add Student\n");
+                 printf("2. View Students\n");
+                 printf("3. Edit Students\n");
+                 printf("4. Delete Students\n");
+                printf("5. Exit\n\e[0m");
+                 printf("Enter your choice: \n");
+                 scanf("%d",&choice);
+                switch(choice)
+                 {
+                         case 1: addStudent();
+                                 break;
+                         case 2: viewStudents();
+                                 break;
+                         case 3: editStudent();
+                                 break;
+                         case 4: deleteStudent();
+                                 break;
+                         case 5: printf("Exiting...\n");
+                                 break;
+                         default: printf("\e[31mInvalid choice, please try again.\n\e[0m");
+                 }
+         }while (choice != 5);
+ }
+int main()
+ {
+ menu();
+ return 0;
+}
